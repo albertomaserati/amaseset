@@ -25,7 +25,7 @@ kotlin {
     }
     
     android {
-       namespace = "com.amasesoft.tabatatimer.shared"
+       namespace = "com.amasesoft.amaseset.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
        minSdk = libs.versions.android.minSdk.get().toInt()
     

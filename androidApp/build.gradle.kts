@@ -21,7 +21,7 @@ dependencies {
 }
 
 android {
-    namespace = "com.amasesoft.tabatatimer"
+    namespace = "com.amasesoft.amaseset"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
