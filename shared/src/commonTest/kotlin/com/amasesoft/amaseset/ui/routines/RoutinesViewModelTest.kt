@@ -197,4 +197,30 @@ class RoutinesViewModelTest {
         assertEquals(listOf<RoutinesEvent>(RoutinesEvent.StorageError, RoutinesEvent.StorageError), events)
         assertEquals(2L, vm.state.value.selectedId)
     }
+
+    @Test
+    fun reorderModeNeedsTwoExercisesAndEndsWhenSwitchingRoutine() = runTest(dispatcher) {
+        val vm = RoutinesViewModel(FakeGymRepository(store.copy(selectedRoutineId = 1)))
+        backgroundScope.launch { vm.state.collect {} }
+
+        vm.setReordering(true)
+        assertTrue(vm.state.value.isReordering)
+        val ids = vm.state.value.exercises.map { it.id }
+        vm.moveExercise(ids[1], -1)
+        assertEquals(ids.reversed(), vm.state.value.exercises.map { it.id })
+        assertTrue(vm.state.value.isReordering)
+
+        vm.select(2)
+        assertFalse(vm.state.value.isReordering)
+        // A single exercise: nothing to reorder.
+        vm.setReordering(true)
+        assertFalse(vm.state.value.isReordering)
+
+        vm.select(1)
+        assertFalse(vm.state.value.isReordering)
+        vm.setReordering(true)
+        assertTrue(vm.state.value.isReordering)
+        vm.setReordering(false)
+        assertFalse(vm.state.value.isReordering)
+    }
 }

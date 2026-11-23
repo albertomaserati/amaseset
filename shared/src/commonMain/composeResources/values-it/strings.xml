@@ -181,21 +181,31 @@
         <item quantity="other">%1$d esercizi</item>
     </plurals>
     <string name="exercise_sets_reps">%1$d×%2$d</string>
-    <string name="progression_increase_badge">+%1$s</string>
     <string name="progression_repeat">Ripeti</string>
     <string name="progression_increase">Aumenta</string>
     <string name="a11y_progression">Prossima volta, %1$s</string>
     <string name="a11y_progression_increase_state">Aumenta di %1$s</string>
     <string name="a11y_progression_repeat_state">Ripeti il peso</string>
-    <string name="exercise_next_time">Prossima volta: %1$s</string>
+    <string name="routines_col_exercise">Esercizio</string>
+    <string name="routines_col_sets">Serie</string>
+    <string name="progression_increase_letter">A</string>
+    <string name="progression_repeat_letter">R</string>
+    <string name="exercise_next_short">Prossima %1$s</string>
+    <string name="a11y_no_weight">senza peso</string>
+    <plurals name="a11y_sets">
+        <item quantity="one">%1$d serie</item>
+        <item quantity="other">%1$d serie</item>
+    </plurals>
+    <plurals name="a11y_reps">
+        <item quantity="one">%1$d ripetizione</item>
+        <item quantity="other">%1$d ripetizioni</item>
+    </plurals>
     <string name="action_apply">Applica</string>
     <string name="a11y_apply">Applica %1$s a %2$s</string>
     <string name="exercise_weight_updated">Peso aggiornato a %1$s</string>
     <string name="action_undo">Annulla</string>
     <string name="action_rename">Rinomina</string>
     <string name="action_duplicate">Duplica</string>
-    <string name="action_move_up">Sposta su</string>
-    <string name="action_move_down">Sposta giù</string>
     <string name="routine_copy_word">copia</string>
     <string name="routine_rename_title">Rinomina scheda</string>
     <string name="routine_name">Nome della scheda</string>

@@ -26,7 +26,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -57,6 +56,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amasesoft.amaseset.components.LoadErrorState
+import com.amasesoft.amaseset.components.RowDivider
+import com.amasesoft.amaseset.components.SectionLabel
 import com.amasesoft.amaseset.domain.MAX_SAVED_WORKOUTS
 import com.amasesoft.amaseset.domain.SavedWorkout
 import com.amasesoft.amaseset.domain.WorkoutConfig
@@ -332,32 +333,6 @@ private val WorkoutSort.label: StringResource
         WorkoutSort.Shortest -> Res.string.sort_shortest
         WorkoutSort.Longest -> Res.string.sort_longest
     }
-
-/** Divider between list rows, inset like the row content. */
-@Composable
-internal fun RowDivider(modifier: Modifier = Modifier) {
-    HorizontalDivider(
-        modifier = modifier.padding(horizontal = 16.dp),
-        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
-    )
-}
-
-/** Small spaced uppercase label above a list ("SAVED · 2/50"). */
-@Composable
-internal fun SectionLabel(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text = text.uppercase(),
-        style = AppTextStyles.overline,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 4.dp)
-            .semantics {
-                contentDescription = text
-                heading()
-            },
-    )
-}
 
 /** Play icon without a filled circle, in the primary color; 48 dp target. */
 @Composable

@@ -62,6 +62,8 @@ data class RoutinesUiState(
     val selectedId: Long? = null,
     val exercises: List<ExerciseItem> = emptyList(),
     val nameDialog: RoutineNameDialog? = null,
+    /** Manual reordering of the exercises (up/down arrows on each row). */
+    val isReordering: Boolean = false,
 ) {
     /** Only a known list allows creating or changing anything. */
     val isListAvailable: Boolean get() = !isLoading && !loadError
@@ -85,6 +87,8 @@ class RoutinesViewModel(private val repository: GymRepository) : ViewModel() {
     /** Each increment re-subscribes to the repository, i.e. re-reads the file. */
     private val reloadTrigger = MutableStateFlow(0)
 
+    private val reorderRequested = MutableStateFlow(false)
+
     /** Selection shown immediately, while it is being written. */
     private val pendingSelection = MutableStateFlow<Long?>(null)
 
@@ -96,30 +100,47 @@ class RoutinesViewModel(private val repository: GymRepository) : ViewModel() {
             .catch { e -> if (e is IOException) emit(GymLoad.Error) else throw e }
     }
 
-    val state: StateFlow<RoutinesUiState> = combine(load, pendingSelection, nameDialog.state) { load, pending, dialog ->
+    val state: StateFlow<RoutinesUiState> = combine(
+        load,
+        pendingSelection,
+        nameDialog.state,
+        reorderRequested,
+    ) { load, pending, dialog, reorder ->
         when (load) {
             GymLoad.Loading -> RoutinesUiState(isLoading = true)
             GymLoad.Error -> RoutinesUiState(isLoading = false, loadError = true)
             is GymLoad.Loaded -> {
                 val store = load.store
                 val selected = store.routines.firstOrNull { it.id == pending } ?: store.selectedRoutine
+                val exercises = selected?.exercises.orEmpty().map { it.toItem() }
                 RoutinesUiState(
                     isLoading = false,
                     routines = store.routines.map { it.toSummary() },
                     selectedId = selected?.id,
-                    exercises = selected?.exercises.orEmpty().map { it.toItem() },
+                    exercises = exercises,
                     nameDialog = dialog,
+                    // Nothing to reorder with fewer than two exercises.
+                    isReordering = reorder && exercises.size > 1,
                 )
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RoutinesUiState())
 
     /** "Retry" after a read error. */
-    fun reload() = reloadTrigger.update { it + 1 }
+    fun reload() {
+        reorderRequested.value = false
+        reloadTrigger.update { it + 1 }
+    }
+
+    /** Enters/leaves the reorder mode (Done, system back, or switching routine leave it). */
+    fun setReordering(enabled: Boolean) {
+        reorderRequested.value = enabled
+    }
 
     /** Shows [id] and remembers it for the next launch. */
     fun select(id: Long) {
         if (id == state.value.selectedId) return
+        reorderRequested.value = false
         pendingSelection.value = id
         viewModelScope.launch {
             try {
