@@ -1,13 +1,14 @@
-# Tabata Timer
+# AmaseSet
 
-Interval (Tabata) timer for **Android** and **iOS**: set up a workout in seconds or save your favorites, then follow the
-countdown with a large display, the next activity, the total time left and audio cues. Built with Kotlin Multiplatform and
-Compose Multiplatform: the whole UI and logic are written once in the [`shared`](./shared/src) module, and the platform
-apps are thin entry points.
+Interval timer and gym routines for **Android** and **iOS**. Set up a Tabata or HIIT workout in seconds, or save your
+favorites, then follow the countdown with a large display, the next activity, the total time left and audio cues.
+In the **Routines** tab, keep your gym routines at hand: exercises with sets × reps, weight and whether to increase or
+repeat it next time. Built with Kotlin Multiplatform and Compose Multiplatform: the whole UI and logic are written once
+in the [`shared`](./shared/src) module, and the platform apps are thin entry points.
 
-| Home | Workout editor | Run screen |
-|:---:|:---:|:---:|
-| <img src="docs/screenshots/home.png" alt="Home with the quick workout card and the saved workouts" width="240"> | <img src="docs/screenshots/editor.png" alt="Workout editor in simple mode" width="240"> | <img src="docs/screenshots/run.png" alt="Run screen during a work phase with the progress ring" width="240"> |
+| Home | Workout editor | Run screen | Routines |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/home.png" alt="Home with the quick workout card and two saved workouts" width="200"> | <img src="docs/screenshots/editor.png" alt="Workout editor in simple mode" width="200"> | <img src="docs/screenshots/run.png" alt="Run screen during a work phase with the progress ring" width="200"> | <img src="docs/screenshots/routines.png" alt="Routines tab with three exercises, one ready to increase its weight" width="200"> |
 
 ## Stack
 
@@ -18,7 +19,7 @@ apps are thin entry points.
 
 ## Architecture
 
-Pure domain logic (workout planner, timeline, a clock based on a monotonic time source so the timer never drifts) sits apart from the UI and repositories, with manual dependency injection.
+Pure domain logic (workout planner, timeline, a clock based on a monotonic time source so the timer never drifts, gym routine operations) sits apart from the UI and repositories, with manual dependency injection.
 The run screen uses MVI because a running workout is a state machine with a pure, testable reducer; home, editor, settings and routines are forms and lists, so they use simpler MVVM.
 
 ## Features
@@ -59,7 +60,7 @@ The run screen uses MVI because a running workout is a state machine with a pure
 ## Build and run
 
 - Android debug APK: `./gradlew :androidApp:assembleDebug`
-  → `androidApp/build/outputs/apk/debug/tabataTimer-<versionName>-debug.apk` (e.g. `tabataTimer-1.1-debug.apk`)
+  → `androidApp/build/outputs/apk/debug/amaseset-<versionName>-debug.apk` (e.g. `amaseset-1.2-debug.apk`)
 - Install on a connected device/emulator: `./gradlew :androidApp:installDebug`
 - iOS app: open [`iosApp`](./iosApp) in Xcode and run it; the Xcode build invokes Gradle to produce the `Shared` framework.
 - iOS compile check without Xcode: `./gradlew :shared:compileKotlinIosSimulatorArm64`
@@ -73,19 +74,20 @@ Tests live in `shared/src/commonTest` and run on both platforms:
 
 - JVM (Android host): `./gradlew :shared:testAndroidHostTest`
 - iOS simulator: `./gradlew :shared:iosSimulatorArm64Test`
-- Single class: `./gradlew :shared:testAndroidHostTest --tests "com.amasesoft.tabatatimer.domain.WorkoutPlannerTest"`
+- Single class: `./gradlew :shared:testAndroidHostTest --tests "com.amasesoft.amaseset.domain.WorkoutPlannerTest"`
 
 ## Project structure
 
-- [`shared/src/commonMain`](./shared/src/commonMain/kotlin/com/amasesoft/tabatatimer) (package `com.amasesoft.tabatatimer`)
-  - `domain/` – pure Kotlin: workout model, planner (config → steps), timeline, drift-free clock, sorting.
+- [`shared/src/commonMain`](./shared/src/commonMain/kotlin/com/amasesoft/amaseset) (package `com.amasesoft.amaseset`)
+  - `domain/` – pure Kotlin: workout model, planner (config → steps), timeline, drift-free clock, sorting, gym routines.
   - `data/` – persistence with DataStore + kotlinx.serialization (JSON files for workouts, settings and gym routines).
   - `ui/` – screens: `home`, `editor`, `run` (MVI), `settings`, `routines` (gym routines tab, manage routines,
     exercise editor); `navigation` with type-safe routes and the bottom bar.
   - `components/` – reusable composables (steppers, value-entry dialog, cards, weight formatting).
   - `theme/` – Material 3 theme, phase colors, typography.
   - `platform/` – `expect` declarations (in-app locale, keep screen on, sound/haptic cues, system bars).
-  - `composeResources/` – strings (`values` English, `values-it` Italian) and vector icons.
+  - `composeResources/` – strings (`values` English, `values-it` Italian) and vector icons; the generated `Res` class is
+    in `com.amasesoft.amaseset.resources`.
 - `shared/src/androidMain`, `shared/src/iosMain` – platform `actual` implementations.
 - [`androidApp`](./androidApp) – Android entry point (`MainActivity`), launcher icon and splash theme.
 - [`iosApp`](./iosApp) – SwiftUI entry point hosting the Compose UI, app icon and launch screen.
