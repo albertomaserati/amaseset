@@ -25,11 +25,11 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.amasesoft.tabatatimer"
+        applicationId = "com.amasesoft.amaseset"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
     }
     packaging {
         resources {
@@ -54,8 +54,8 @@ android {
     }
 }
 
-// Output file names: tabataTimer-<versionName>-debug.apk, tabataTimer-<versionName>-release.apk, ...
+// Output file names: amaseset-<versionName>-debug.apk, amaseset-<versionName>-release.apk, ...
 // Declared after `android {}` so that versionName is already set.
 base {
-    archivesName = "tabataTimer-${android.defaultConfig.versionName}"
+    archivesName = "amaseset-${android.defaultConfig.versionName}"
 }

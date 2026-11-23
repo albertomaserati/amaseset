@@ -1,4 +1,4 @@
-rootProject.name = "TabataTimer"
+rootProject.name = "AmaseSet"
 
 pluginManagement {
     repositories {

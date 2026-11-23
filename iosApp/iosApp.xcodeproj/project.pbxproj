@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		09CA6C696FC2DD8BFB03EF47 /* TabataTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TabataTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		09CA6C696FC2DD8BFB03EF47 /* AmaseSet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AmaseSet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -58,7 +58,7 @@
 		2E7C28F55204321BACAE33AE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				09CA6C696FC2DD8BFB03EF47 /* TabataTimer.app */,
+				09CA6C696FC2DD8BFB03EF47 /* AmaseSet.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,7 +95,7 @@
 			packageProductDependencies = (
 			);
 			productName = iosApp;
-			productReference = 09CA6C696FC2DD8BFB03EF47 /* TabataTimer.app */;
+			productReference = 09CA6C696FC2DD8BFB03EF47 /* AmaseSet.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
