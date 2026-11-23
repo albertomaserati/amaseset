@@ -65,12 +65,12 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import tabatatimer.shared.generated.resources.Res
-import tabatatimer.shared.generated.resources.a11y_decrease
-import tabatatimer.shared.generated.resources.a11y_edit_value
-import tabatatimer.shared.generated.resources.a11y_increase
-import tabatatimer.shared.generated.resources.ic_add
-import tabatatimer.shared.generated.resources.ic_remove
+import com.amasesoft.amaseset.resources.Res
+import com.amasesoft.amaseset.resources.a11y_decrease
+import com.amasesoft.amaseset.resources.a11y_edit_value
+import com.amasesoft.amaseset.resources.a11y_increase
+import com.amasesoft.amaseset.resources.ic_add
+import com.amasesoft.amaseset.resources.ic_remove
 
 /**
  * Stepper for a duration in seconds, shown as `m:ss`.

@@ -13,11 +13,11 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import tabatatimer.shared.generated.resources.Res
-import tabatatimer.shared.generated.resources.ic_fitness
-import tabatatimer.shared.generated.resources.ic_timer
-import tabatatimer.shared.generated.resources.tab_routines
-import tabatatimer.shared.generated.resources.tab_timer
+import com.amasesoft.amaseset.resources.Res
+import com.amasesoft.amaseset.resources.ic_fitness
+import com.amasesoft.amaseset.resources.ic_timer
+import com.amasesoft.amaseset.resources.tab_routines
+import com.amasesoft.amaseset.resources.tab_timer
 
 /** Top-level destinations, shown in the bottom bar. */
 enum class MainTab(val label: StringResource, val icon: DrawableResource) {

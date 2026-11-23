@@ -5,10 +5,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import com.amasesoft.amaseset.domain.formatWeight
 import org.jetbrains.compose.resources.stringResource
-import tabatatimer.shared.generated.resources.Res
-import tabatatimer.shared.generated.resources.a11y_half_kilo
-import tabatatimer.shared.generated.resources.decimal_separator
-import tabatatimer.shared.generated.resources.unit_kg
+import com.amasesoft.amaseset.resources.Res
+import com.amasesoft.amaseset.resources.a11y_half_kilo
+import com.amasesoft.amaseset.resources.decimal_separator
+import com.amasesoft.amaseset.resources.unit_kg
 
 /**
  * Weight formatting for the active **in-app** language: the decimal separator comes from the

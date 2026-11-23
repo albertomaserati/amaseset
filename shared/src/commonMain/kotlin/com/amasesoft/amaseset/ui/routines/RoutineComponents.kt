@@ -24,16 +24,16 @@ import com.amasesoft.amaseset.domain.GymNameError
 import com.amasesoft.amaseset.domain.RoutineLimits
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import tabatatimer.shared.generated.resources.Res
-import tabatatimer.shared.generated.resources.action_cancel
-import tabatatimer.shared.generated.resources.action_save
-import tabatatimer.shared.generated.resources.char_counter
-import tabatatimer.shared.generated.resources.editor_name_required
-import tabatatimer.shared.generated.resources.name_too_long
-import tabatatimer.shared.generated.resources.routine_name
-import tabatatimer.shared.generated.resources.routine_name_taken
-import tabatatimer.shared.generated.resources.routine_rename_title
-import tabatatimer.shared.generated.resources.routines_new
+import com.amasesoft.amaseset.resources.Res
+import com.amasesoft.amaseset.resources.action_cancel
+import com.amasesoft.amaseset.resources.action_save
+import com.amasesoft.amaseset.resources.char_counter
+import com.amasesoft.amaseset.resources.editor_name_required
+import com.amasesoft.amaseset.resources.name_too_long
+import com.amasesoft.amaseset.resources.routine_name
+import com.amasesoft.amaseset.resources.routine_name_taken
+import com.amasesoft.amaseset.resources.routine_rename_title
+import com.amasesoft.amaseset.resources.routines_new
 
 /**
  * Single-line name field with an inline error (same style as the workout editor) and a

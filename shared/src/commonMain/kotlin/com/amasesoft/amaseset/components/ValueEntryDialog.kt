@@ -56,13 +56,13 @@ import androidx.compose.ui.window.DialogProperties
 import com.amasesoft.amaseset.theme.TabularNumbers
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import tabatatimer.shared.generated.resources.Res
-import tabatatimer.shared.generated.resources.a11y_backspace
-import tabatatimer.shared.generated.resources.action_cancel
-import tabatatimer.shared.generated.resources.action_ok
-import tabatatimer.shared.generated.resources.entry_out_of_range
-import tabatatimer.shared.generated.resources.entry_range
-import tabatatimer.shared.generated.resources.ic_backspace
+import com.amasesoft.amaseset.resources.Res
+import com.amasesoft.amaseset.resources.a11y_backspace
+import com.amasesoft.amaseset.resources.action_cancel
+import com.amasesoft.amaseset.resources.action_ok
+import com.amasesoft.amaseset.resources.entry_out_of_range
+import com.amasesoft.amaseset.resources.entry_range
+import com.amasesoft.amaseset.resources.ic_backspace
 
 /** Saves a [DigitEntry] across configuration changes / process death. */
 internal val DigitEntrySaver = Saver<DigitEntry, List<Any>>(

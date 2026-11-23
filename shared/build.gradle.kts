@@ -77,3 +77,8 @@ kotlin {
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
 }
+
+// Fixed package for the generated `Res` class, independent of rootProject.name.
+compose.resources {
+    packageOfResClass = "com.amasesoft.amaseset.resources"
+}

@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.dp
 import com.amasesoft.amaseset.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import tabatatimer.shared.generated.resources.Res
-import tabatatimer.shared.generated.resources.action_retry
-import tabatatimer.shared.generated.resources.ic_add
-import tabatatimer.shared.generated.resources.ic_error
-import tabatatimer.shared.generated.resources.ic_replay
+import com.amasesoft.amaseset.resources.Res
+import com.amasesoft.amaseset.resources.action_retry
+import com.amasesoft.amaseset.resources.ic_add
+import com.amasesoft.amaseset.resources.ic_error
+import com.amasesoft.amaseset.resources.ic_replay
 
 /** Grouping card of the editors, with an optional heading. */
 @Composable
