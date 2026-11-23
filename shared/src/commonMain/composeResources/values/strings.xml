@@ -24,8 +24,10 @@
     <string name="a11y_increase">Increase %1$s</string>
 
     <!-- Home -->
-    <string name="home_saved_section">Saved workouts (%1$d/%2$d)</string>
-    <string name="home_new_workout">New workout</string>
+    <string name="home_quick_start">Quick start</string>
+    <string name="home_saved_label">Saved · %1$d/%2$d</string>
+    <string name="home_custom_cycles">custom</string>
+    <string name="home_new_workout">New</string>
     <string name="home_empty_title">No saved workouts yet</string>
     <string name="home_empty_message">Create a workout to find it here, ready to start with one tap.</string>
     <string name="home_summary">%1$s · %2$s × %3$s</string>
@@ -33,7 +35,6 @@
         <item quantity="one">%1$d use</item>
         <item quantity="other">%1$d uses</item>
     </plurals>
-    <string name="home_advanced_badge">Advanced</string>
     <string name="home_delete_title">Delete workout?</string>
     <string name="home_delete_message">“%1$s” will be permanently deleted.</string>
     <string name="limit_reached">You can save up to %1$d workouts. Delete one to save a new one.</string>

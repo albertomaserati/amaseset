@@ -1,5 +1,6 @@
 package com.amasesoft.amaseset.ui.home
 
+import com.amasesoft.amaseset.data.AppSettings
 import com.amasesoft.amaseset.data.FakeSettingsRepository
 import com.amasesoft.amaseset.data.FakeWorkoutRepository
 import com.amasesoft.amaseset.data.FailingWorkoutRepository
@@ -126,5 +127,29 @@ class HomeViewModelTest {
         // Before the first read completes nothing claims "no workouts" and nothing can be created.
         assertTrue(vm.state.value.isLoading)
         assertFalse(vm.state.value.isListAvailable)
+    }
+
+    @Test
+    fun quickStartShowsTheLastQuickConfig() = runTest(dispatcher) {
+        val last = WorkoutConfig(prepareSeconds = 5, sets = 2, plan = CyclePlan.Uniform(40, 20, 6))
+        val settings = FakeSettingsRepository(AppSettings(lastQuickConfig = last))
+        val vm = HomeViewModel(FakeWorkoutRepository(store), settings)
+        backgroundScope.launch { vm.state.collect {} }
+
+        assertEquals(last, vm.state.value.quickConfig)
+        // 5 + 2 × (6 × 40 + 5 × 20) + 60 between sets
+        assertEquals(745, vm.state.value.quickTotalSeconds)
+
+        val next = WorkoutConfig(plan = CyclePlan.Uniform(30, 0, 3))
+        settings.update { it.copy(lastQuickConfig = next) }
+        assertEquals(next, vm.state.value.quickConfig)
+    }
+
+    @Test
+    fun quickStartIsAvailableEvenWhenTheWorkoutsCannotBeRead() = runTest(dispatcher) {
+        val vm = HomeViewModel(FailingWorkoutRepository(), FakeSettingsRepository())
+        backgroundScope.launch { vm.state.collect {} }
+        assertTrue(vm.state.value.loadError)
+        assertEquals(WorkoutConfig.Default, vm.state.value.quickConfig)
     }
 }

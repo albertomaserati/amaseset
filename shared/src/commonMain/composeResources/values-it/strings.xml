@@ -24,8 +24,10 @@
     <string name="a11y_increase">Aumenta %1$s</string>
 
     <!-- Home -->
-    <string name="home_saved_section">Allenamenti salvati (%1$d/%2$d)</string>
-    <string name="home_new_workout">Nuovo allenamento</string>
+    <string name="home_quick_start">Avvio rapido</string>
+    <string name="home_saved_label">Salvati · %1$d/%2$d</string>
+    <string name="home_custom_cycles">personalizzato</string>
+    <string name="home_new_workout">Nuovo</string>
     <string name="home_empty_title">Nessun allenamento salvato</string>
     <string name="home_empty_message">Crea un allenamento per ritrovarlo qui, pronto da avviare con un tocco.</string>
     <string name="home_summary">%1$s · %2$s × %3$s</string>
@@ -33,7 +35,6 @@
         <item quantity="one">%1$d utilizzo</item>
         <item quantity="other">%1$d utilizzi</item>
     </plurals>
-    <string name="home_advanced_badge">Avanzato</string>
     <string name="home_delete_title">Eliminare l’allenamento?</string>
     <string name="home_delete_message">“%1$s” verrà eliminato definitivamente.</string>
     <string name="limit_reached">Puoi salvare al massimo %1$d allenamenti. Eliminane uno per salvarne uno nuovo.</string>

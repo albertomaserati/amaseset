@@ -133,6 +133,8 @@ fun AppNavHost(
             HomeScreen(
                 viewModel = viewModel,
                 onQuickWorkout = { entry.ifResumed { navController.navigate(EditorRoute(EditorMode.Quick)) } },
+                // Quick start: no title, no workoutId (no use is counted); same double-tap guard.
+                onStartQuick = { config -> entry.startRun(config, title = null, workoutId = null) },
                 onNewWorkout = { entry.ifResumed { navController.navigate(EditorRoute(EditorMode.New)) } },
                 onEditWorkout = { id -> entry.ifResumed { navController.navigate(EditorRoute(EditorMode.Edit, id)) } },
                 onStartWorkout = { workout -> entry.startRun(workout.config, workout.name, workout.id) },

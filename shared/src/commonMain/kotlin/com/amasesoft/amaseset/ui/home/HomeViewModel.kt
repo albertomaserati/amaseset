@@ -7,6 +7,8 @@ import com.amasesoft.amaseset.data.SettingsRepository
 import com.amasesoft.amaseset.data.WorkoutRepository
 import com.amasesoft.amaseset.domain.MAX_SAVED_WORKOUTS
 import com.amasesoft.amaseset.domain.SavedWorkout
+import com.amasesoft.amaseset.domain.WorkoutConfig
+import com.amasesoft.amaseset.domain.WorkoutPlanner
 import com.amasesoft.amaseset.domain.WorkoutSort
 import com.amasesoft.amaseset.domain.sortedFor
 import kotlinx.coroutines.channels.Channel
@@ -33,11 +35,12 @@ data class WorkoutItem(
     val name: String,
     val description: String,
     val totalSeconds: Int,
-    val sets: Int,
-    val cycles: Int,
-    val isAdvanced: Boolean,
+    val config: WorkoutConfig,
     val usageCount: Int,
-)
+) {
+    val sets: Int get() = config.sets
+    val cycles: Int get() = config.plan.count
+}
 
 /** Result of reading the saved workouts. */
 sealed interface WorkoutsLoad {
@@ -54,7 +57,11 @@ data class HomeUiState(
     val workouts: List<WorkoutItem> = emptyList(),
     val sort: WorkoutSort = WorkoutSort.Custom,
     val isReordering: Boolean = false,
+    /** Last quick configuration (or the default): the "Quick start" row shows and starts it. */
+    val quickConfig: WorkoutConfig = WorkoutConfig.Default,
 ) {
+    val quickTotalSeconds: Int get() = WorkoutPlanner.totalSeconds(quickConfig)
+
     /** True only when the list is known: while loading or after a read error, the limit cannot be checked. */
     val isListAvailable: Boolean get() = !isLoading && !loadError
 
@@ -88,17 +95,21 @@ class HomeViewModel(
 
     val state: StateFlow<HomeUiState> = combine(
         workoutsLoad,
-        settingsRepository.settings.map { it.workoutSort },
+        settingsRepository.settings,
         isReordering,
-    ) { load, sort, reordering ->
+    ) { load, settings, reordering ->
+        val sort = settings.workoutSort
+        // Sanitized like the editor does when it loads it: always runnable.
+        val quick = settings.lastQuickConfig.sanitized()
         when (load) {
-            WorkoutsLoad.Loading -> HomeUiState(isLoading = true, sort = sort)
-            WorkoutsLoad.Error -> HomeUiState(isLoading = false, loadError = true, sort = sort)
+            WorkoutsLoad.Loading -> HomeUiState(isLoading = true, sort = sort, quickConfig = quick)
+            WorkoutsLoad.Error -> HomeUiState(isLoading = false, loadError = true, sort = sort, quickConfig = quick)
             is WorkoutsLoad.Loaded -> HomeUiState(
                 isLoading = false,
                 workouts = load.workouts.sortedFor(sort).map { it.toItem() },
                 sort = sort,
                 isReordering = reordering && sort == WorkoutSort.Custom,
+                quickConfig = quick,
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
@@ -167,8 +178,6 @@ private fun SavedWorkout.toItem() = WorkoutItem(
     name = name,
     description = description,
     totalSeconds = totalSeconds,
-    sets = config.sets,
-    cycles = config.plan.count,
-    isAdvanced = config.isAdvanced,
+    config = config,
     usageCount = usageCount,
 )
