@@ -24,7 +24,6 @@
     <string name="a11y_increase">Increase %1$s</string>
 
     <!-- Home -->
-    <string name="home_quick_subtitle">Set it up and start right away, no need to save</string>
     <string name="home_saved_section">Saved workouts (%1$d/%2$d)</string>
     <string name="home_new_workout">New workout</string>
     <string name="home_empty_title">No saved workouts yet</string>
@@ -57,7 +56,6 @@
     <string name="editor_description">Description (optional)</string>
     <string name="editor_simple">Simple</string>
     <string name="editor_advanced">Advanced</string>
-    <string name="editor_simple_hint">All cycles are the same. Switch to Advanced to customize each cycle.</string>
     <string name="editor_advanced_hint">Each cycle has its own name, work and rest time.</string>
     <string name="editor_general_section">General</string>
     <string name="editor_cycles_section">Cycles</string>
@@ -65,7 +63,6 @@
     <string name="editor_sets">Sets</string>
     <string name="editor_rest_between_sets">Rest between sets</string>
     <string name="editor_rest_between_sets_hint">Not after the last set</string>
-    <string name="editor_rest_between_sets_single">Only used with 2 or more sets</string>
     <string name="editor_work">Work</string>
     <string name="editor_rest">Rest</string>
     <string name="editor_rest_hint">Not after the last cycle of each set</string>
@@ -216,7 +213,7 @@
     <string name="exercise_reps">Reps</string>
     <string name="exercise_weight_section">Weight</string>
     <string name="exercise_use_weight">Use weight</string>
-    <string name="exercise_use_weight_hint">Turn off for bodyweight exercises</string>
+    <string name="exercise_use_weight_hint">Off for bodyweight</string>
     <string name="exercise_weight">Weight</string>
     <string name="exercise_weight_hint">Same for every set</string>
     <string name="exercise_progression_section">Next time</string>

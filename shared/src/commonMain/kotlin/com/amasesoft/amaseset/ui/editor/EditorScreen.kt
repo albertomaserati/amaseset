@@ -67,6 +67,7 @@ import com.amasesoft.amaseset.domain.MAX_SAVED_WORKOUTS
 import com.amasesoft.amaseset.domain.WorkoutConfig
 import com.amasesoft.amaseset.domain.WorkoutConfig.Limits
 import com.amasesoft.amaseset.domain.formatSeconds
+import com.amasesoft.amaseset.theme.AppTextStyles
 import com.amasesoft.amaseset.theme.AppThemeExtras
 import com.amasesoft.amaseset.theme.TabularNumbers
 import org.jetbrains.compose.resources.getString
@@ -105,13 +106,11 @@ import com.amasesoft.amaseset.resources.editor_prepare
 import com.amasesoft.amaseset.resources.editor_rest
 import com.amasesoft.amaseset.resources.editor_rest_between_sets
 import com.amasesoft.amaseset.resources.editor_rest_between_sets_hint
-import com.amasesoft.amaseset.resources.editor_rest_between_sets_single
 import com.amasesoft.amaseset.resources.editor_rest_hint
 import com.amasesoft.amaseset.resources.editor_save_dialog_title
 import com.amasesoft.amaseset.resources.editor_saved
 import com.amasesoft.amaseset.resources.editor_sets
 import com.amasesoft.amaseset.resources.editor_simple
-import com.amasesoft.amaseset.resources.editor_simple_hint
 import com.amasesoft.amaseset.resources.editor_simplify_confirm
 import com.amasesoft.amaseset.resources.editor_simplify_message
 import com.amasesoft.amaseset.resources.editor_simplify_title
@@ -382,9 +381,8 @@ private fun GeneralSection(state: EditorUiState, viewModel: EditorViewModel) {
             range = Limits.restSeconds,
             presets = SetRestPresets,
             enabled = state.sets > 1,
-            supportingText = stringResource(
-                if (state.sets > 1) Res.string.editor_rest_between_sets_hint else Res.string.editor_rest_between_sets_single,
-            ),
+            // With a single set the field is disabled: that says enough.
+            supportingText = if (state.sets > 1) stringResource(Res.string.editor_rest_between_sets_hint) else null,
         )
     }
 }
@@ -457,20 +455,22 @@ private fun ModeSelector(isAdvanced: Boolean, onAdvancedChange: (Boolean) -> Uni
             SegmentedButton(
                 selected = !isAdvanced,
                 onClick = { onAdvancedChange(false) },
-                shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+                shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2, baseShape = MaterialTheme.shapes.small),
             ) { Text(stringResource(Res.string.editor_simple)) }
             SegmentedButton(
                 selected = isAdvanced,
                 onClick = { onAdvancedChange(true) },
-                shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+                shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2, baseShape = MaterialTheme.shapes.small),
             ) { Text(stringResource(Res.string.editor_advanced)) }
         }
-        Text(
-            text = stringResource(if (isAdvanced) Res.string.editor_advanced_hint else Res.string.editor_simple_hint),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 4.dp),
-        )
+        if (isAdvanced) {
+            Text(
+                text = stringResource(Res.string.editor_advanced_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 4.dp),
+            )
+        }
     }
 }
 
@@ -502,7 +502,7 @@ private fun CycleCard(
                 ) {
                     Text(
                         text = "${index + 1}",
-                        style = MaterialTheme.typography.labelLarge.merge(TabularNumbers),
+                        style = MaterialTheme.typography.titleMedium.merge(TabularNumbers),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                     )
                 }
@@ -586,13 +586,14 @@ private fun EditorBottomBar(
                     )
                     Text(
                         text = formatSeconds(totalSeconds),
-                        style = MaterialTheme.typography.headlineSmall.merge(TabularNumbers),
+                        style = AppTextStyles.numberLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 Button(
                     onClick = onPrimary,
                     enabled = enabled,
+                    shape = MaterialTheme.shapes.small,
                     modifier = Modifier.height(56.dp),
                 ) {
                     AnimatedVisibility(visible = mode == EditorMode.Quick) {
@@ -633,7 +634,7 @@ private fun CyclesHeader(count: Int, modifier: Modifier = Modifier) {
         )
         Text(
             text = pluralStringResource(Res.plurals.editor_cycle_count, count, count),
-            style = MaterialTheme.typography.labelLarge.merge(TabularNumbers),
+            style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary,
         )
     }

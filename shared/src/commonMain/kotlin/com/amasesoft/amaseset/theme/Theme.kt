@@ -1,7 +1,9 @@
 package com.amasesoft.amaseset.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -9,6 +11,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.amasesoft.amaseset.domain.PhaseType
 
 // Colors aligned with the AM logo: teal primary, navy secondary, green tertiary.
@@ -75,6 +78,19 @@ private val DarkColorScheme = darkColorScheme(
     inversePrimary = LogoTeal,
 )
 
+/**
+ * 8 dp corners for cards, FAB, text fields, chips, menus and snackbars; dialogs (extraLarge) a
+ * bit rounder. Buttons and segmented buttons default to fully rounded shapes in Material 3, so
+ * they get [MaterialTheme.shapes].small explicitly where they are used.
+ */
+private val AppShapes = Shapes(
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(8.dp),
+    medium = RoundedCornerShape(8.dp),
+    large = RoundedCornerShape(8.dp),
+    extraLarge = RoundedCornerShape(16.dp),
+)
+
 /** Accent color for each workout phase. */
 @Immutable
 data class PhaseColors(
@@ -110,9 +126,13 @@ fun AppTheme(
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val phaseColors = if (darkTheme) DarkPhaseColors else LightPhaseColors
 
-    CompositionLocalProvider(LocalPhaseColors provides phaseColors) {
+    CompositionLocalProvider(
+        LocalPhaseColors provides phaseColors,
+        LocalCondensedFontFamily provides rememberCondensedFontFamily(),
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
+            shapes = AppShapes,
             content = content
         )
     }

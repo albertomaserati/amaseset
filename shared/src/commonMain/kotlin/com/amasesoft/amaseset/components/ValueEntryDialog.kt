@@ -334,6 +334,7 @@ private fun Keypad(
                         PadKey.Empty -> Box(keyModifier)
                         PadKey.Backspace -> FilledTonalButton(
                             onClick = onBackspace,
+                            shape = MaterialTheme.shapes.small,
                             modifier = keyModifier.heightIn(min = 52.dp),
                             contentPadding = KeyPadding,
                         ) {
@@ -359,6 +360,7 @@ private fun KeypadKey(
 ) {
     FilledTonalButton(
         onClick = onClick,
+        shape = MaterialTheme.shapes.small,
         modifier = modifier
             .heightIn(min = 52.dp)
             .then(if (spokenLabel != null) Modifier.semantics { contentDescription = spokenLabel } else Modifier),

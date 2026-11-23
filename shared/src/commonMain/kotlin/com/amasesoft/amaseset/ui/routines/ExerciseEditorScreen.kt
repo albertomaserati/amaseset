@@ -313,7 +313,7 @@ private fun ProgressionSelector(progression: Progression, onChange: (Progression
             SegmentedButton(
                 selected = progression == value,
                 onClick = { onChange(value) },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size, baseShape = MaterialTheme.shapes.small),
             ) { Text(stringResource(label), maxLines = 1) }
         }
     }
@@ -394,6 +394,7 @@ private fun SaveBar(enabled: Boolean, onSave: () -> Unit) {
             Button(
                 onClick = onSave,
                 enabled = enabled,
+                shape = MaterialTheme.shapes.small,
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()

@@ -21,8 +21,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +58,7 @@ import androidx.compose.ui.unit.sp
 import com.amasesoft.amaseset.domain.ExerciseLimits
 import com.amasesoft.amaseset.domain.formatSeconds
 import com.amasesoft.amaseset.theme.AppTheme
-import com.amasesoft.amaseset.theme.TabularNumbers
+import com.amasesoft.amaseset.theme.AppTextStyles
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -267,7 +268,7 @@ private fun ValueStepper(
             icon = { Icon(painterResource(Res.drawable.ic_remove), stringResource(Res.string.a11y_decrease, a11yTitle)) },
         )
 
-        // Tappable value: tonal rounded surface + ripple signal it can be edited.
+        // Tappable value: a light rounded background + ripple signal it opens the keypad.
         val editLabel = stringResource(Res.string.a11y_edit_value, a11yTitle)
         Box(
             modifier = Modifier
@@ -301,7 +302,7 @@ private fun ValueStepper(
             ) { text ->
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.titleLarge.merge(TabularNumbers),
+                    style = AppTextStyles.numberMedium,
                     textAlign = TextAlign.Center,
                     color = if (enabled) {
                         MaterialTheme.colorScheme.onSurface
@@ -411,10 +412,15 @@ private fun RepeatingIconButton(
         }
     }
 
-    FilledTonalIconButton(
+    // Plain icon in the primary color (no filled circle), dimmed when disabled; 48 dp target.
+    IconButton(
         onClick = { if (!repeatState[0]) currentOnStep() },
         enabled = enabled,
         interactionSource = interactionSource,
+        colors = IconButtonDefaults.iconButtonColors(
+            contentColor = MaterialTheme.colorScheme.primary,
+            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+        ),
         modifier = Modifier.size(48.dp),
     ) {
         icon()

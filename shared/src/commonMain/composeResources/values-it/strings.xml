@@ -24,7 +24,6 @@
     <string name="a11y_increase">Aumenta %1$s</string>
 
     <!-- Home -->
-    <string name="home_quick_subtitle">Configura e parti subito, senza salvare</string>
     <string name="home_saved_section">Allenamenti salvati (%1$d/%2$d)</string>
     <string name="home_new_workout">Nuovo allenamento</string>
     <string name="home_empty_title">Nessun allenamento salvato</string>
@@ -57,7 +56,6 @@
     <string name="editor_description">Descrizione (facoltativa)</string>
     <string name="editor_simple">Semplice</string>
     <string name="editor_advanced">Avanzata</string>
-    <string name="editor_simple_hint">Tutti i cicli sono uguali. Passa ad Avanzata per personalizzare ogni ciclo.</string>
     <string name="editor_advanced_hint">Ogni ciclo ha un nome e tempi di lavoro e riposo propri.</string>
     <string name="editor_general_section">Generale</string>
     <string name="editor_cycles_section">Cicli</string>
@@ -65,7 +63,6 @@
     <string name="editor_sets">Set</string>
     <string name="editor_rest_between_sets">Riposo tra i set</string>
     <string name="editor_rest_between_sets_hint">Non dopo l’ultimo set</string>
-    <string name="editor_rest_between_sets_single">Usato solo con 2 o più set</string>
     <string name="editor_work">Lavoro</string>
     <string name="editor_rest">Riposo</string>
     <string name="editor_rest_hint">Non dopo l’ultimo ciclo di ogni set</string>
@@ -216,7 +213,7 @@
     <string name="exercise_reps">Ripetizioni</string>
     <string name="exercise_weight_section">Peso</string>
     <string name="exercise_use_weight">Usa peso</string>
-    <string name="exercise_use_weight_hint">Disattiva per gli esercizi a corpo libero</string>
+    <string name="exercise_use_weight_hint">Spento a corpo libero</string>
     <string name="exercise_weight">Peso</string>
     <string name="exercise_weight_hint">Uguale per tutte le serie</string>
     <string name="exercise_progression_section">La prossima volta</string>

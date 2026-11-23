@@ -160,7 +160,7 @@ fun LoadErrorState(message: String, onRetry: () -> Unit, modifier: Modifier = Mo
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
         Spacer(Modifier.height(16.dp))
-        Button(onClick = onRetry, modifier = Modifier.heightIn(min = 48.dp)) {
+        Button(onClick = onRetry, shape = MaterialTheme.shapes.small, modifier = Modifier.heightIn(min = 48.dp)) {
             Icon(painterResource(Res.drawable.ic_replay), contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
             Text(stringResource(Res.string.action_retry))

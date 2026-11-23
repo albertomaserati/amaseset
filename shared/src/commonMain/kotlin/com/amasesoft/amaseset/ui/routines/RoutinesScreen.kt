@@ -332,7 +332,7 @@ private fun RoutineSelector(
                 SegmentedButton(
                     selected = routine.id == selectedId,
                     onClick = { onSelect(routine.id) },
-                    shape = SegmentedButtonDefaults.itemShape(index = index, count = routines.size),
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = routines.size, baseShape = MaterialTheme.shapes.small),
                     // No check mark: the space goes to the name, the selection is shown by the color.
                     icon = {},
                     modifier = Modifier.weight(1f),
@@ -645,7 +645,7 @@ private fun NoRoutinesState(onCreate: () -> Unit, modifier: Modifier = Modifier)
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(24.dp))
-        FilledTonalButton(onClick = onCreate, modifier = Modifier.heightIn(min = 48.dp)) {
+        FilledTonalButton(onClick = onCreate, shape = MaterialTheme.shapes.small, modifier = Modifier.heightIn(min = 48.dp)) {
             Icon(painterResource(Res.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
             Text(stringResource(Res.string.routines_new))

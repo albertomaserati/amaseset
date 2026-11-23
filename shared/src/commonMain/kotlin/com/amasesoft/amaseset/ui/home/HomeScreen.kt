@@ -86,7 +86,6 @@ import com.amasesoft.amaseset.resources.home_delete_title
 import com.amasesoft.amaseset.resources.home_empty_message
 import com.amasesoft.amaseset.resources.home_empty_title
 import com.amasesoft.amaseset.resources.home_new_workout
-import com.amasesoft.amaseset.resources.home_quick_subtitle
 import com.amasesoft.amaseset.resources.home_saved_section
 import com.amasesoft.amaseset.resources.home_summary
 import com.amasesoft.amaseset.resources.home_uses
@@ -320,7 +319,6 @@ private fun QuickWorkoutCard(onClick: () -> Unit, modifier: Modifier = Modifier)
             Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {
                 Text(stringResource(Res.string.quick_workout), style = MaterialTheme.typography.titleLarge)
-                Text(stringResource(Res.string.home_quick_subtitle), style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

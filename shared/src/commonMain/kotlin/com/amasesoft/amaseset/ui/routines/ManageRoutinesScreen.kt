@@ -41,7 +41,6 @@ import com.amasesoft.amaseset.components.DashedAddCard
 import com.amasesoft.amaseset.components.LoadErrorState
 import com.amasesoft.amaseset.components.WholeWordsText
 import com.amasesoft.amaseset.domain.MAX_ROUTINES
-import com.amasesoft.amaseset.theme.TabularNumbers
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
@@ -218,7 +217,7 @@ private fun RoutineRow(
                 )
                 Text(
                     text = pluralStringResource(Res.plurals.routine_exercise_count, routine.exerciseCount, routine.exerciseCount),
-                    style = MaterialTheme.typography.labelMedium.merge(TabularNumbers),
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
