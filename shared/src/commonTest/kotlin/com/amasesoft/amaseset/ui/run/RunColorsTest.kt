@@ -1,6 +1,7 @@
 package com.amasesoft.amaseset.ui.run
 
 import androidx.compose.ui.graphics.Color
+import com.amasesoft.amaseset.data.RunBackground
 import com.amasesoft.amaseset.domain.PhaseType
 import com.amasesoft.amaseset.theme.DarkBackground
 import com.amasesoft.amaseset.theme.DarkOnBackground

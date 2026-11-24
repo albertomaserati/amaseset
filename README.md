@@ -36,7 +36,8 @@ The run screen uses MVI because a running workout is a state machine with a pure
   The chosen sort is remembered.
 - **Run screen**: the whole screen takes the color of the phase (work, rest, prepare, rest between sets), with a progress
   ring, remaining seconds of the current activity, its name, next activity, total time remaining and a total progress bar,
-  cycle/set counter, pause/resume, skip, stop. Audio and haptic cues (can be turned off), an optional
+  cycle/set counter, pause/resume, skip, stop. In the settings, "Full-color background" can be turned off for a dark
+  background tinted with the phase color. Audio and haptic cues (can be turned off), an optional
   warning 10 seconds before the end of an activity, screen kept on. The timer is drift-free and auto-pauses when the app goes to the background.
 - **Routines** ("Schede", second tab of the bottom bar): gym routines, independent from the timer, to check and update
   while training. Up to 20 routines with unique names, up to 50 exercises each. Each exercise has name, optional

@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.toRoute
+import com.amasesoft.amaseset.data.RunBackground
 import com.amasesoft.amaseset.data.StorageJson
 import com.amasesoft.amaseset.di.AppContainer
 import com.amasesoft.amaseset.domain.WorkoutConfig
@@ -85,6 +86,7 @@ fun AppNavHost(
     container: AppContainer,
     soundEnabled: Boolean,
     tenSecondWarning: Boolean,
+    runBackground: RunBackground,
 ) {
     fun NavBackStackEntry.startRun(config: WorkoutConfig, title: String?, workoutId: Long?) = ifResumed {
         navController.navigate(
@@ -208,6 +210,7 @@ fun AppNavHost(
                 viewModel = viewModel,
                 soundEnabled = soundEnabled,
                 tenSecondWarning = tenSecondWarning,
+                runBackground = runBackground,
                 onClose = { entry.back() },
             )
         }

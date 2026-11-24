@@ -85,6 +85,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
+import com.amasesoft.amaseset.data.RunBackground
 import com.amasesoft.amaseset.domain.PhaseType
 import com.amasesoft.amaseset.domain.Step
 import com.amasesoft.amaseset.domain.formatSeconds
@@ -131,6 +132,8 @@ fun RunScreen(
     viewModel: RunViewModel,
     soundEnabled: Boolean,
     tenSecondWarning: Boolean,
+    /** From the settings; a change applies right away, also during a workout. */
+    runBackground: RunBackground,
     onClose: () -> Unit,
 ) {
     val uiState = viewModel.state.collectAsStateWithLifecycle()
@@ -175,7 +178,7 @@ fun RunScreen(
         viewModel.onIntent(RunIntent.Pause)
     }
 
-    RunContent(stateHolder = uiState, onIntent = viewModel::onIntent)
+    RunContent(stateHolder = uiState, runBackground = runBackground, onIntent = viewModel::onIntent)
 }
 
 /**
@@ -185,6 +188,7 @@ fun RunScreen(
 @Composable
 private fun RunContent(
     stateHolder: State<RunUiState>,
+    runBackground: RunBackground,
     onIntent: (RunIntent) -> Unit,
 ) {
     val status by remember { derivedStateOf { stateHolder.value.status } }
@@ -208,8 +212,8 @@ private fun RunContent(
     val phaseColors = AppThemeExtras.phaseColors
     val scheme = MaterialTheme.colorScheme
     val phaseType = currentStep?.type
-    val target = remember(status, phaseType, phaseColors, scheme) {
-        runColors(RUN_BACKGROUND, phaseType, status, phaseColors, scheme.background, scheme.onBackground, scheme.primary)
+    val target = remember(runBackground, status, phaseType, phaseColors, scheme) {
+        runColors(runBackground, phaseType, status, phaseColors, scheme.background, scheme.onBackground, scheme.primary)
     }
     val colorSpec = tween<Color>(500)
     val colors = RunColors(

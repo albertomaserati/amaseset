@@ -66,6 +66,7 @@ fun App(container: AppContainer) {
                         container = container,
                         soundEnabled = current.soundEnabled,
                         tenSecondWarning = current.tenSecondWarning,
+                        runBackground = current.runBackground,
                     )
                 }
             }

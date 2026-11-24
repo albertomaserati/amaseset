@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.amasesoft.amaseset.data.AppLanguage
 import com.amasesoft.amaseset.data.AppSettings
+import com.amasesoft.amaseset.data.RunBackground
 import com.amasesoft.amaseset.data.SettingsRepository
 import com.amasesoft.amaseset.data.ThemeMode
 import com.amasesoft.amaseset.di.AppVersion
@@ -80,6 +81,8 @@ import com.amasesoft.amaseset.resources.settings_about
 import com.amasesoft.amaseset.resources.settings_language
 import com.amasesoft.amaseset.resources.settings_sound
 import com.amasesoft.amaseset.resources.settings_sound_hint
+import com.amasesoft.amaseset.resources.settings_run_full_color
+import com.amasesoft.amaseset.resources.settings_run_full_color_hint
 import com.amasesoft.amaseset.resources.settings_ten_seconds
 import com.amasesoft.amaseset.resources.settings_ten_seconds_hint
 import com.amasesoft.amaseset.resources.settings_theme
@@ -100,6 +103,11 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
     fun setTheme(theme: ThemeMode) = update { it.copy(theme = theme) }
     fun setSoundEnabled(enabled: Boolean) = update { it.copy(soundEnabled = enabled) }
     fun setTenSecondWarning(enabled: Boolean) = update { it.copy(tenSecondWarning = enabled) }
+
+    /** On: the phase color fills the run screen ([RunBackground.FullColor]); off: [RunBackground.Dark]. */
+    fun setFullColorRunBackground(enabled: Boolean) = update {
+        it.copy(runBackground = if (enabled) RunBackground.FullColor else RunBackground.Dark)
+    }
 
     private val _errors = Channel<Unit>(Channel.CONFLATED)
 
@@ -176,6 +184,13 @@ fun SettingsScreen(viewModel: SettingsViewModel, appVersion: AppVersion, onBack:
                     hint = stringResource(Res.string.settings_ten_seconds_hint),
                     checked = current.tenSecondWarning,
                     onCheckedChange = viewModel::setTenSecondWarning,
+                )
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                SwitchRow(
+                    title = stringResource(Res.string.settings_run_full_color),
+                    hint = stringResource(Res.string.settings_run_full_color_hint),
+                    checked = current.runBackground == RunBackground.FullColor,
+                    onCheckedChange = viewModel::setFullColorRunBackground,
                 )
             }
             AboutSection(appVersion)

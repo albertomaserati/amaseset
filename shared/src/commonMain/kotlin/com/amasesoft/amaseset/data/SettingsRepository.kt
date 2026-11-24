@@ -13,6 +13,16 @@ enum class AppLanguage(val tag: String?) { System(null), Italian("it"), English(
 @Serializable
 enum class ThemeMode { System, Light, Dark }
 
+/** Background of the run screen. */
+@Serializable
+enum class RunBackground {
+    /** The whole screen takes the phase color; text, ring and controls in the phase "ink". */
+    FullColor,
+
+    /** The theme background lightly tinted with the phase; ring and phase label in the phase color. */
+    Dark,
+}
+
 @Serializable
 data class AppSettings(
     val language: AppLanguage = AppLanguage.System,
@@ -23,6 +33,8 @@ data class AppSettings(
     val tenSecondWarning: Boolean = false,
     /** Last configuration used for a quick (unsaved) workout, restored next time. */
     val lastQuickConfig: WorkoutConfig = WorkoutConfig.Default,
+    /** Run screen background ("Full-color background" switch in the settings). */
+    val runBackground: RunBackground = RunBackground.FullColor,
 )
 
 interface SettingsRepository {

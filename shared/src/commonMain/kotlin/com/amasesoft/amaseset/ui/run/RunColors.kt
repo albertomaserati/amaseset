@@ -4,21 +4,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
+import com.amasesoft.amaseset.data.RunBackground
 import com.amasesoft.amaseset.domain.PhaseType
 import com.amasesoft.amaseset.theme.PhaseColors
 import com.amasesoft.amaseset.theme.desaturated
-
-/** Background style of the run screen. */
-enum class RunBackground {
-    /** The whole screen takes the phase color; text, ring and controls in the phase "ink". */
-    FullColor,
-
-    /** The theme background lightly tinted with the phase; ring and phase label in the phase color. */
-    Dark,
-}
-
-/** Single switch for the run screen background (see [RunBackground]). */
-internal val RUN_BACKGROUND = RunBackground.FullColor
 
 /** How much a paused screen loses its color. */
 private const val PAUSED_DESATURATION = 0.7f
