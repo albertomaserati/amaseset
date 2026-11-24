@@ -8,7 +8,7 @@ in the [`shared`](./shared/src) module, and the platform apps are thin entry poi
 
 | Home | Workout editor | Run screen | Routines |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/home.png" alt="Home with the quick workout card and two saved workouts" width="200"> | <img src="docs/screenshots/editor.png" alt="Workout editor in simple mode" width="200"> | <img src="docs/screenshots/run.png" alt="Run screen during a work phase with the progress ring" width="200"> | <img src="docs/screenshots/routines.png" alt="Routines tab with three exercises, one ready to increase its weight" width="200"> |
+| <img src="docs/screenshots/home.png" alt="Home with the quick start row and two saved workouts" width="200"> | <img src="docs/screenshots/editor.png" alt="Workout editor in simple mode" width="200"> | <img src="docs/screenshots/run.png" alt="Run screen during a work phase, on the full phase color" width="200"> | <img src="docs/screenshots/routines.png" alt="Routines tab with three exercises in columns, one ready to increase its weight" width="200"> |
 
 ## Stack
 
@@ -25,6 +25,7 @@ The run screen uses MVI because a running workout is a state machine with a pure
 ## Features
 
 - **Quick workout**: set preparation, work, rest, cycles, sets and rest between sets, then start right away without saving.
+  The Home "Quick start" row shows the last quick configuration ("1 × 8 · 20/10") and starts it again with one tap.
   A cycle is work + rest, except the last cycle of each set, which is work only.
 - **Simple and advanced mode** in the same editor: advanced mode lets every cycle have its own name, work and rest time.
   Switching to advanced copies the simple values into each cycle; switching back asks for confirmation if the cycles differ.
@@ -33,14 +34,16 @@ The run screen uses MVI because a running workout is a state machine with a pure
 - **Saved workouts**: up to 50, each with a unique name and an optional description.
 - **Home list** sortable by custom order (reorder mode, move to top/bottom), name, most used, newest/oldest, shortest/longest.
   The chosen sort is remembered.
-- **Run screen**: progress ring with phase colors, remaining seconds of the current activity, its name, next activity,
-  total time remaining, set/cycle indicators, pause/resume, skip, stop. Audio and haptic cues (can be turned off), an optional
+- **Run screen**: the whole screen takes the color of the phase (work, rest, prepare, rest between sets), with a progress
+  ring, remaining seconds of the current activity, its name, next activity, total time remaining and a total progress bar,
+  cycle/set counter, pause/resume, skip, stop. Audio and haptic cues (can be turned off), an optional
   warning 10 seconds before the end of an activity, screen kept on. The timer is drift-free and auto-pauses when the app goes to the background.
 - **Routines** ("Schede", second tab of the bottom bar): gym routines, independent from the timer, to check and update
   while training. Up to 20 routines with unique names, up to 50 exercises each. Each exercise has name, optional
   description, sets × reps, an optional weight (half-kilo steps, same for every set) and what to do next time:
-  **Increase** (with an increment, default 2 kg) or **Repeat**. The progression badge on the card toggles with a tap;
-  for Increase, "Next time: 16 kg" + **Apply** updates the weight and switches back to Repeat, with Undo.
+  **Increase** (with an increment, default 2 kg) or **Repeat**. Exercises are shown as aligned columns (sets × reps, kg, A/R);
+  the A/R circle toggles with a tap; for Increase, "Next 16 · **Apply**" updates the weight and switches back to Repeat,
+  with Undo. A reorder mode moves exercises up and down.
   Up to 3 routines are switched with segmented buttons, from 4 with a dropdown; the last routine shown is remembered.
   A separate screen renames, duplicates, deletes and reorders routines. Weights are typed with the same keypad,
   with a ",5" key for the half kilo.
@@ -48,6 +51,8 @@ The run screen uses MVI because a running workout is a state machine with a pure
 - **Theme**: light, dark or system.
 - **About** section in the settings with the app version and a link to the developer website.
 - App icon (stopwatch with lightning bolt) and splash screen on both platforms.
+- Numbers and a few titles use **Barlow Condensed** (SIL Open Font License 1.1, see
+  [`docs/licenses/BarlowCondensed-OFL.txt`](./docs/licenses/BarlowCondensed-OFL.txt)).
 
 ## Requirements
 
@@ -90,7 +95,7 @@ Tests live in `shared/src/commonTest` and run on both platforms:
     in `com.amasesoft.amaseset.resources`.
 - `shared/src/androidMain`, `shared/src/iosMain` – platform `actual` implementations.
 - [`androidApp`](./androidApp) – Android entry point (`MainActivity`), launcher icon and splash theme.
-- [`iosApp`](./iosApp) – SwiftUI entry point hosting the Compose UI, app icon and launch screen.
+- [`iosApp`](./iosApp) – UIKit entry point (scene delegate + root view controller) hosting the Compose UI, app icon and launch screen.
 - [`design/icon`](./design/icon) – source SVGs of the app icon. If they change, regenerate the iOS PNGs and update the
   Android vector drawables (`androidApp/src/main/res/drawable/ic_launcher_*.xml`) by hand.
 
