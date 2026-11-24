@@ -594,7 +594,7 @@ private fun RunControls(
                 .size(88.dp)
                 .clip(CircleShape)
                 .border(2.dp, ink, CircleShape)
-                .clickable(role = Role.Button, onClickLabel = pauseLabel, onClick = onTogglePause)
+                .clickable(role = Role.Button, onClick = onTogglePause)
                 .semantics { contentDescription = pauseLabel },
             contentAlignment = Alignment.Center,
         ) {

@@ -121,15 +121,13 @@ class RoutinesViewModelTest {
     }
 
     @Test
-    fun toggleMoveAndDelete() = runTest(dispatcher) {
+    fun toggleAndMove() = runTest(dispatcher) {
         val vm = RoutinesViewModel(FakeGymRepository(store.copy(selectedRoutineId = 1)))
         backgroundScope.launch { vm.state.collect {} }
         vm.toggleProgression(3)
         assertEquals(Progression.Repeat, vm.state.value.exercises.first().progression)
         vm.moveExercise(4, -1)
         assertEquals(listOf("Trazioni", "Panca"), vm.state.value.exercises.map { it.name })
-        vm.deleteExercise(4)
-        assertEquals(listOf("Panca"), vm.state.value.exercises.map { it.name })
     }
 
     @Test

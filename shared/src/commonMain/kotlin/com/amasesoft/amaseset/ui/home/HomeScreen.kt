@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,12 +36,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,7 +53,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.amasesoft.amaseset.components.ListLoadingItem
 import com.amasesoft.amaseset.components.LoadErrorState
+import com.amasesoft.amaseset.components.MoveButtons
 import com.amasesoft.amaseset.components.RowDivider
 import com.amasesoft.amaseset.components.SectionLabel
 import com.amasesoft.amaseset.domain.MAX_SAVED_WORKOUTS
@@ -74,8 +74,6 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import com.amasesoft.amaseset.resources.Res
 import com.amasesoft.amaseset.resources.a11y_more
-import com.amasesoft.amaseset.resources.a11y_move_down
-import com.amasesoft.amaseset.resources.a11y_move_up
 import com.amasesoft.amaseset.resources.a11y_start
 import com.amasesoft.amaseset.resources.action_cancel
 import com.amasesoft.amaseset.resources.action_delete
@@ -221,22 +219,22 @@ fun HomeScreen(
                 bottom = padding.calculateBottomPadding() + 96.dp,
             ),
         ) {
-            if (!state.isReordering) {
+            // Shown only once the last quick configuration is known (settings read).
+            val quickConfig = state.quickConfig
+            if (!state.isReordering && quickConfig != null) {
                 item(key = "quick") {
                     QuickStartRow(
-                        config = state.quickConfig,
-                        totalSeconds = state.quickTotalSeconds,
+                        config = quickConfig,
+                        totalSeconds = state.quickTotalSeconds ?: 0,
                         onClick = onQuickWorkout,
-                        onStart = { onStartQuick(state.quickConfig) },
+                        onStart = { onStartQuick(quickConfig) },
                         modifier = Modifier.animateItem(),
                     )
                 }
             }
             when {
                 state.isLoading -> item(key = "loading") {
-                    Box(Modifier.fillMaxWidth().padding(vertical = 40.dp).animateItem(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(modifier = Modifier.size(32.dp), strokeWidth = 3.dp)
-                    }
+                    ListLoadingItem(Modifier.animateItem())
                 }
 
                 state.loadError -> item(key = "error") {
@@ -370,7 +368,7 @@ private fun QuickStartRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 72.dp)
-                .clickable(onClick = onClick)
+                .clickable(onClickLabel = stringResource(Res.string.action_edit), onClick = onClick)
                 .padding(start = 16.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -453,7 +451,12 @@ private fun WorkoutRow(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 72.dp)
-            .clickable(enabled = !isReordering, onClick = onEdit)
+            .clickable(
+                enabled = !isReordering,
+                // The row opens the editor: announce the action.
+                onClickLabel = stringResource(Res.string.action_edit),
+                onClick = onEdit,
+            )
             .padding(start = 16.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -488,14 +491,7 @@ private fun WorkoutRow(
             label = "rowActions",
         ) { reordering ->
             if (reordering) {
-                Row {
-                    IconButton(onClick = { onMove(-1) }, enabled = !isFirst) {
-                        Icon(painterResource(Res.drawable.ic_arrow_up), stringResource(Res.string.a11y_move_up, item.name))
-                    }
-                    IconButton(onClick = { onMove(1) }, enabled = !isLast) {
-                        Icon(painterResource(Res.drawable.ic_arrow_down), stringResource(Res.string.a11y_move_down, item.name))
-                    }
-                }
+                MoveButtons(name = item.name, isFirst = isFirst, isLast = isLast, onMove = onMove)
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(

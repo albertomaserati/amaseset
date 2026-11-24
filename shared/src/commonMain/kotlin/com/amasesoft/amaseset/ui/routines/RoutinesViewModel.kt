@@ -74,7 +74,7 @@ data class RoutinesUiState(
 }
 
 /**
- * MVVM, like the Home: a list with independent actions (select, toggle, apply, move, delete).
+ * MVVM, like the Home: a list with independent actions (select, toggle, apply, move).
  * Writes go to the repository, and the screen is rebuilt from the file content it emits.
  */
 class RoutinesViewModel(private val repository: GymRepository) : ViewModel() {
@@ -184,8 +184,6 @@ class RoutinesViewModel(private val repository: GymRepository) : ViewModel() {
     fun undoIncrease(applied: AppliedIncrease) = write { repository.undoIncrease(applied) }
 
     fun moveExercise(exerciseId: Long, offset: Int) = write { repository.moveExercise(exerciseId, offset) }
-
-    fun deleteExercise(exerciseId: Long) = write { repository.deleteExercise(exerciseId) }
 
     // endregion
 

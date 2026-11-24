@@ -57,10 +57,13 @@ data class HomeUiState(
     val workouts: List<WorkoutItem> = emptyList(),
     val sort: WorkoutSort = WorkoutSort.Custom,
     val isReordering: Boolean = false,
-    /** Last quick configuration (or the default): the "Quick start" row shows and starts it. */
-    val quickConfig: WorkoutConfig = WorkoutConfig.Default,
+    /**
+     * Last quick configuration (or the default), shown and started by the "Quick start" row;
+     * `null` until the settings have been read, so the row never starts a stale default.
+     */
+    val quickConfig: WorkoutConfig? = null,
 ) {
-    val quickTotalSeconds: Int get() = WorkoutPlanner.totalSeconds(quickConfig)
+    val quickTotalSeconds: Int? get() = quickConfig?.let(WorkoutPlanner::totalSeconds)
 
     /** True only when the list is known: while loading or after a read error, the limit cannot be checked. */
     val isListAvailable: Boolean get() = !isLoading && !loadError

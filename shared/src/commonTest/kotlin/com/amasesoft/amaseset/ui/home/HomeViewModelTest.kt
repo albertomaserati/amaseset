@@ -2,6 +2,9 @@ package com.amasesoft.amaseset.ui.home
 
 import com.amasesoft.amaseset.data.AppSettings
 import com.amasesoft.amaseset.data.FakeSettingsRepository
+import com.amasesoft.amaseset.data.SettingsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import com.amasesoft.amaseset.data.FakeWorkoutRepository
 import com.amasesoft.amaseset.data.FailingWorkoutRepository
 import com.amasesoft.amaseset.data.WorkoutStore
@@ -21,6 +24,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -151,5 +155,24 @@ class HomeViewModelTest {
         backgroundScope.launch { vm.state.collect {} }
         assertTrue(vm.state.value.loadError)
         assertEquals(WorkoutConfig.Default, vm.state.value.quickConfig)
+    }
+
+    @Test
+    fun quickStartIsUnknownUntilTheSettingsAreRead() = runTest(dispatcher) {
+        val last = WorkoutConfig(sets = 3, plan = CyclePlan.Uniform(45, 15, 5))
+        val settings = MutableSharedFlow<AppSettings>()
+        val repo = object : SettingsRepository {
+            override val settings: Flow<AppSettings> = settings
+            override suspend fun update(transform: (AppSettings) -> AppSettings) = Unit
+        }
+        val vm = HomeViewModel(FakeWorkoutRepository(store), repo)
+        backgroundScope.launch { vm.state.collect {} }
+
+        // Not the default: nothing to show or start yet.
+        assertNull(vm.state.value.quickConfig)
+        assertNull(vm.state.value.quickTotalSeconds)
+
+        settings.emit(AppSettings(lastQuickConfig = last))
+        assertEquals(last, vm.state.value.quickConfig)
     }
 }
