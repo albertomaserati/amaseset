@@ -1,6 +1,7 @@
 package com.amasesoft.amaseset.ui.run
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -9,8 +10,11 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,6 +30,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -34,15 +39,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -56,22 +58,22 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -87,10 +89,13 @@ import com.amasesoft.amaseset.domain.PhaseType
 import com.amasesoft.amaseset.domain.Step
 import com.amasesoft.amaseset.domain.formatSeconds
 import com.amasesoft.amaseset.platform.KeepScreenOn
+import com.amasesoft.amaseset.platform.OverrideSystemBars
 import com.amasesoft.amaseset.platform.rememberCuePlayer
+import com.amasesoft.amaseset.theme.AppTextStyles
 import com.amasesoft.amaseset.theme.AppThemeExtras
 import com.amasesoft.amaseset.theme.CountdownTextStyle
 import com.amasesoft.amaseset.theme.TabularNumbers
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import com.amasesoft.amaseset.resources.Res
@@ -112,13 +117,11 @@ import com.amasesoft.amaseset.resources.phase_rest
 import com.amasesoft.amaseset.resources.phase_set_rest
 import com.amasesoft.amaseset.resources.phase_work
 import com.amasesoft.amaseset.resources.quick_workout
-import com.amasesoft.amaseset.resources.run_cycle_indicator
-import com.amasesoft.amaseset.resources.run_finished_subtitle
-import com.amasesoft.amaseset.resources.run_finished_title
+import com.amasesoft.amaseset.resources.run_done
 import com.amasesoft.amaseset.resources.run_last_activity
 import com.amasesoft.amaseset.resources.run_next
 import com.amasesoft.amaseset.resources.run_paused
-import com.amasesoft.amaseset.resources.run_set_indicator
+import com.amasesoft.amaseset.resources.run_progress
 import com.amasesoft.amaseset.resources.run_stop_message
 import com.amasesoft.amaseset.resources.run_stop_title
 import com.amasesoft.amaseset.resources.run_total_remaining
@@ -201,40 +204,38 @@ private fun RunContent(
         onBackCompleted = { showStopDialog = true },
     )
 
+    // Colors: a pure choice (see runColors), animated between phases and on pause.
     val phaseColors = AppThemeExtras.phaseColors
-    val accent by animateColorAsState(
-        targetValue = if (status == RunStatus.Finished) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            phaseColors.of(currentStep?.type ?: PhaseType.Prepare)
-        },
-        animationSpec = tween(500),
-        label = "phaseAccent",
+    val scheme = MaterialTheme.colorScheme
+    val phaseType = currentStep?.type
+    val target = remember(status, phaseType, phaseColors, scheme) {
+        runColors(RUN_BACKGROUND, phaseType, status, phaseColors, scheme.background, scheme.onBackground, scheme.primary)
+    }
+    val colorSpec = tween<Color>(500)
+    val colors = RunColors(
+        background = animateColorAsState(target.background, colorSpec, label = "runBackground").value,
+        ink = animateColorAsState(target.ink, colorSpec, label = "runInk").value,
+        accent = animateColorAsState(target.accent, colorSpec, label = "runAccent").value,
+        track = animateColorAsState(target.track, colorSpec, label = "runTrack").value,
     )
-    val background = MaterialTheme.colorScheme.background
-    val tintedBackground = lerp(background, accent, 0.14f)
+    // Dark status bar icons on a light phase color, light icons otherwise.
+    OverrideSystemBars(darkBackground = !target.isLightBackground)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(tintedBackground)
+            .background(colors.background)
             .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(horizontal = 24.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = requestStop) {
-                Icon(painterResource(Res.drawable.ic_arrow_back), stringResource(Res.string.action_close))
-            }
-            Text(
-                text = title ?: stringResource(Res.string.quick_workout),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f).padding(start = 4.dp),
-            )
-        }
+        RunTopBar(
+            title = title ?: stringResource(Res.string.quick_workout),
+            stateHolder = stateHolder,
+            showTotal = status != RunStatus.Finished,
+            ink = colors.ink,
+            onClose = requestStop,
+        )
 
         val totalSets = remember(stateHolder) { stateHolder.value.totalSets }
         val totalCycles = remember(stateHolder) { stateHolder.value.totalCycles }
@@ -249,17 +250,17 @@ private fun RunContent(
                         val s = stateHolder.value
                         if (s.status == RunStatus.Finished) 1f else 1f - s.stepProgress
                     },
-                    color = accent,
-                    trackColor = accent.copy(alpha = 0.18f),
+                    color = colors.accent,
+                    trackColor = colors.track,
                     modifier = Modifier.size(side),
                 ) {
                     if (status == RunStatus.Finished) {
-                        FinishedContent(accent = accent, ringSize = side)
+                        FinishedContent(ink = colors.ink, ringSize = side)
                     } else {
                         PhaseContent(
                             stateHolder = stateHolder,
                             step = currentStep,
-                            accent = accent,
+                            colors = colors,
                             paused = status == RunStatus.Paused,
                             ringSize = side,
                         )
@@ -267,21 +268,27 @@ private fun RunContent(
                 }
             }
         }
+        val progressLine: @Composable () -> Unit = {
+            if (status != RunStatus.Finished) {
+                ProgressLine(stateHolder, totalSets, totalCycles, colors.ink)
+            }
+        }
         val details: @Composable () -> Unit = {
             if (status != RunStatus.Finished) {
-                NextUp(nextStep = nextStep)
-                Spacer(Modifier.height(16.dp))
-                TotalRemaining(stateHolder = stateHolder, accent = accent)
+                NextUp(nextStep = nextStep, ink = colors.ink)
+                Spacer(Modifier.height(10.dp))
+                TotalProgressBar(stateHolder = stateHolder, colors = colors)
                 Spacer(Modifier.height(24.dp))
                 RunControls(
                     paused = status == RunStatus.Paused,
-                    accent = accent,
+                    ink = colors.ink,
                     onStop = requestStop,
                     onTogglePause = { onIntent(RunIntent.TogglePause) },
                     onSkip = { onIntent(RunIntent.Skip) },
                 )
             } else {
                 FinishedControls(
+                    colors = colors,
                     onRestart = { onIntent(RunIntent.Restart) },
                     onClose = { onIntent(RunIntent.Stop) },
                 )
@@ -302,7 +309,7 @@ private fun RunContent(
                         modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        ProgressIndicators(stateHolder, totalSets, totalCycles, accent)
+                        progressLine()
                         Spacer(Modifier.height(16.dp))
                         details()
                     }
@@ -312,8 +319,8 @@ private fun RunContent(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Spacer(Modifier.height(8.dp))
-                    ProgressIndicators(stateHolder, totalSets, totalCycles, accent)
+                    Spacer(Modifier.height(4.dp))
+                    progressLine()
                     ring(Modifier.weight(1f).fillMaxWidth())
                     details()
                     Spacer(Modifier.height(16.dp))
@@ -340,30 +347,54 @@ private fun RunContent(
     }
 }
 
+/** Close, title of the workout and total time left. */
 @Composable
-private fun ProgressIndicators(stateHolder: State<RunUiState>, totalSets: Int, totalCycles: Int, accent: Color) {
-    val setNumber by remember { derivedStateOf { stateHolder.value.currentStep?.setNumber ?: 0 } }
-    val cycleNumber by remember { derivedStateOf { stateHolder.value.currentStep?.cycleNumber ?: 0 } }
-
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        IndicatorPill(stringResource(Res.string.run_set_indicator, setNumber, totalSets), accent)
-        IndicatorPill(stringResource(Res.string.run_cycle_indicator, cycleNumber, totalCycles), accent)
+private fun RunTopBar(
+    title: String,
+    stateHolder: State<RunUiState>,
+    showTotal: Boolean,
+    ink: Color,
+    onClose: () -> Unit,
+) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        IconButton(onClick = onClose, colors = IconButtonDefaults.iconButtonColors(contentColor = ink)) {
+            Icon(painterResource(Res.drawable.ic_arrow_back), stringResource(Res.string.action_close))
+        }
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            color = ink,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f).padding(start = 4.dp),
+        )
+        if (showTotal) {
+            val totalSeconds by remember { derivedStateOf { stateHolder.value.position.displayTotalSeconds } }
+            val formatted = formatSeconds(totalSeconds)
+            val spoken = stringResource(Res.string.run_total_remaining) + ", " + formatted
+            Text(
+                text = formatted,
+                style = MaterialTheme.typography.headlineSmall.merge(TabularNumbers),
+                color = ink,
+                modifier = Modifier.padding(start = 12.dp).semantics { contentDescription = spoken },
+            )
+        }
     }
 }
 
+/** "CYCLE 1 / 8 · SET 1 / 1" in condensed capitals. */
 @Composable
-private fun IndicatorPill(text: String, accent: Color) {
-    Surface(
-        shape = CircleShape,
-        color = accent.copy(alpha = 0.16f),
-        contentColor = MaterialTheme.colorScheme.onBackground,
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge.merge(TabularNumbers),
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-        )
-    }
+private fun ProgressLine(stateHolder: State<RunUiState>, totalSets: Int, totalCycles: Int, ink: Color) {
+    val setNumber by remember { derivedStateOf { stateHolder.value.currentStep?.setNumber ?: 0 } }
+    val cycleNumber by remember { derivedStateOf { stateHolder.value.currentStep?.cycleNumber ?: 0 } }
+    val text = stringResource(Res.string.run_progress, cycleNumber, totalCycles, setNumber, totalSets)
+    Text(
+        text = text.uppercase(),
+        style = AppTextStyles.condensedLabel,
+        color = ink,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.semantics { contentDescription = text },
+    )
 }
 
 /** Circular progress drawn with [Canvas]; [progress] is read in the draw phase only. */
@@ -377,7 +408,7 @@ private fun ProgressRing(
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidth = size.minDimension * 0.06f
+            val strokeWidth = size.minDimension * 0.05f
             val inset = strokeWidth / 2
             val arcSize = Size(size.width - strokeWidth, size.height - strokeWidth)
             val topLeft = Offset(inset, inset)
@@ -408,7 +439,7 @@ private fun ProgressRing(
 private fun PhaseContent(
     stateHolder: State<RunUiState>,
     step: Step?,
-    accent: Color,
+    colors: RunColors,
     paused: Boolean,
     ringSize: Dp,
 ) {
@@ -426,26 +457,26 @@ private fun PhaseContent(
         ) { label ->
             Text(
                 text = label.uppercase(),
-                style = MaterialTheme.typography.titleLarge.fitRing(ringSize, 0.075f),
+                style = AppTextStyles.condensedLabel.copy(fontSize = 30.sp, lineHeight = 34.sp).fitRing(ringSize, 0.085f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                color = accent,
+                color = colors.accent,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.semantics {
+                    contentDescription = label
                     heading()
                     liveRegion = LiveRegionMode.Polite
                 },
             )
         }
         // Rest steps carry the name of the cycle just done: show it only while working
-        // (during rests the "Next" card already announces the upcoming exercise).
+        // (during rests the "Next" line already announces the upcoming exercise).
         val cycleName = if (step?.type == PhaseType.Work) step.cycleName else ""
         if (cycleName.isNotEmpty()) {
             Text(
                 text = cycleName,
                 style = MaterialTheme.typography.titleMedium.fitRing(ringSize, 0.06f),
-                color = MaterialTheme.colorScheme.onBackground,
+                color = colors.ink,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,
@@ -467,106 +498,80 @@ private fun PhaseContent(
             Text(
                 text = value,
                 style = style,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = colors.ink,
                 modifier = Modifier.semantics { contentDescription = value },
             )
         }
-        if (paused) {
+        AnimatedVisibility(visible = paused) {
+            val pausedText = stringResource(Res.string.run_paused)
             Text(
-                text = stringResource(Res.string.run_paused),
-                style = MaterialTheme.typography.labelLarge.fitRing(ringSize, 0.05f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = pausedText.uppercase(),
+                style = AppTextStyles.condensedLabel.fitRing(ringSize, 0.06f),
+                color = colors.ink,
+                modifier = Modifier.semantics {
+                    contentDescription = pausedText
+                    liveRegion = LiveRegionMode.Polite
+                },
             )
         }
     }
 }
 
 @Composable
-private fun FinishedContent(accent: Color, ringSize: Dp) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(ringSize * RingContentPadding),
-    ) {
-        Text(
-            text = stringResource(Res.string.run_finished_title),
-            style = MaterialTheme.typography.headlineLarge.fitRing(ringSize, 0.1f),
-            fontWeight = FontWeight.Bold,
-            color = accent,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = stringResource(Res.string.run_finished_subtitle),
-            style = MaterialTheme.typography.bodyLarge.fitRing(ringSize, 0.055f),
-            color = MaterialTheme.colorScheme.onBackground,
-            textAlign = TextAlign.Center,
-        )
-    }
+private fun FinishedContent(ink: Color, ringSize: Dp) {
+    val done = stringResource(Res.string.run_done)
+    Text(
+        text = done.uppercase(),
+        style = CountdownTextStyle.copy(letterSpacing = 2.sp).fitRing(ringSize, 0.2f),
+        color = ink,
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        modifier = Modifier
+            .padding(ringSize * RingContentPadding)
+            .semantics {
+                contentDescription = done
+                heading()
+                liveRegion = LiveRegionMode.Polite
+            },
+    )
 }
 
+/** "NEXT · REST 0:10" above the progress bar. */
 @Composable
-private fun NextUp(nextStep: Step?) {
+private fun NextUp(nextStep: Step?, ink: Color) {
     val text = if (nextStep == null) {
         stringResource(Res.string.run_last_activity)
     } else {
-        val label = stepLabel(nextStep)
-        stringResource(Res.string.run_next, label, formatSeconds(nextStep.durationSeconds))
+        stringResource(Res.string.run_next, stepLabel(nextStep), formatSeconds(nextStep.durationSeconds))
     }
-    val nextColor = nextStep?.let { AppThemeExtras.phaseColors.of(it.type) } ?: MaterialTheme.colorScheme.outline
-    Surface(
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        ) {
-            Box(Modifier.size(12.dp).background(nextColor, CircleShape))
-            Spacer(Modifier.size(12.dp))
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
+    Text(
+        text = text.uppercase(),
+        style = AppTextStyles.condensedLabel,
+        color = ink,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.fillMaxWidth().semantics { contentDescription = text },
+    )
 }
 
+/** Continuous bar of the whole workout; progress read in the draw phase. */
 @Composable
-private fun TotalRemaining(stateHolder: State<RunUiState>, accent: Color) {
-    val totalSeconds by remember { derivedStateOf { stateHolder.value.position.displayTotalSeconds } }
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(Res.string.run_total_remaining),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
-            )
-            Text(
-                text = formatSeconds(totalSeconds),
-                style = MaterialTheme.typography.titleMedium.merge(TabularNumbers),
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        }
-        Spacer(Modifier.height(8.dp))
-        LinearProgressIndicator(
-            progress = { stateHolder.value.totalProgress },
-            color = accent,
-            trackColor = accent.copy(alpha = 0.2f),
-            modifier = Modifier.fillMaxWidth().height(6.dp),
-            drawStopIndicator = {},
-        )
-    }
+private fun TotalProgressBar(stateHolder: State<RunUiState>, colors: RunColors) {
+    LinearProgressIndicator(
+        progress = { stateHolder.value.totalProgress },
+        color = colors.accent,
+        trackColor = colors.track,
+        strokeCap = StrokeCap.Round,
+        gapSize = 0.dp,
+        drawStopIndicator = {},
+        modifier = Modifier.fillMaxWidth().height(6.dp),
+    )
 }
 
 @Composable
 private fun RunControls(
     paused: Boolean,
-    accent: Color,
+    ink: Color,
     onStop: () -> Unit,
     onTogglePause: () -> Unit,
     onSkip: () -> Unit,
@@ -576,33 +581,66 @@ private fun RunControls(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FilledTonalIconButton(onClick = onStop, modifier = Modifier.size(64.dp)) {
-            Icon(painterResource(Res.drawable.ic_stop), stringResource(Res.string.action_stop))
-        }
-        FilledIconButton(
-            onClick = onTogglePause,
-            modifier = Modifier.size(88.dp),
-            colors = IconButtonDefaults.filledIconButtonColors(
-                containerColor = accent,
-                contentColor = MaterialTheme.colorScheme.surface,
-            ),
+        LabeledIconButton(
+            icon = Res.drawable.ic_stop,
+            label = stringResource(Res.string.action_stop),
+            ink = ink,
+            onClick = onStop,
+        )
+        // The main control: bigger, in an outlined circle.
+        val pauseLabel = stringResource(if (paused) Res.string.action_resume else Res.string.action_pause)
+        Box(
+            modifier = Modifier
+                .size(88.dp)
+                .clip(CircleShape)
+                .border(2.dp, ink, CircleShape)
+                .clickable(role = Role.Button, onClickLabel = pauseLabel, onClick = onTogglePause)
+                .semantics { contentDescription = pauseLabel },
+            contentAlignment = Alignment.Center,
         ) {
             AnimatedContent(targetState = paused, label = "pauseIcon") { isPaused ->
                 Icon(
                     painter = painterResource(if (isPaused) Res.drawable.ic_play else Res.drawable.ic_pause),
-                    contentDescription = stringResource(if (isPaused) Res.string.action_resume else Res.string.action_pause),
-                    modifier = Modifier.size(40.dp),
+                    contentDescription = null,
+                    tint = ink,
+                    modifier = Modifier.size(44.dp),
                 )
             }
         }
-        FilledTonalIconButton(onClick = onSkip, modifier = Modifier.size(64.dp)) {
-            Icon(painterResource(Res.drawable.ic_skip_next), stringResource(Res.string.action_skip))
-        }
+        LabeledIconButton(
+            icon = Res.drawable.ic_skip_next,
+            label = stringResource(Res.string.action_skip),
+            ink = ink,
+            onClick = onSkip,
+        )
+    }
+}
+
+/** Icon with a small label under it, no container; at least 64×64 dp to tap. */
+@Composable
+private fun LabeledIconButton(icon: DrawableResource, label: String, ink: Color, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .sizeIn(minWidth = 72.dp, minHeight = 64.dp)
+            .clip(MaterialTheme.shapes.small)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(horizontal = 8.dp, vertical = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(painterResource(icon), contentDescription = null, tint = ink, modifier = Modifier.size(30.dp))
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = ink,
+            maxLines = 1,
+        )
     }
 }
 
 @Composable
-private fun FinishedControls(onRestart: () -> Unit, onClose: () -> Unit) {
+private fun FinishedControls(colors: RunColors, onRestart: () -> Unit, onClose: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -610,6 +648,9 @@ private fun FinishedControls(onRestart: () -> Unit, onClose: () -> Unit) {
         // Labels stay on one line and shrink if needed (narrow phones, large font scale).
         OutlinedButton(
             onClick = onRestart,
+            shape = MaterialTheme.shapes.small,
+            border = BorderStroke(1.5.dp, colors.ink),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = colors.ink),
             modifier = Modifier.weight(1f).heightIn(min = 56.dp),
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
@@ -621,7 +662,12 @@ private fun FinishedControls(onRestart: () -> Unit, onClose: () -> Unit) {
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             SingleLineButtonLabel(stringResource(Res.string.action_restart))
         }
-        Button(onClick = onClose, modifier = Modifier.weight(1f).heightIn(min = 56.dp)) {
+        Button(
+            onClick = onClose,
+            shape = MaterialTheme.shapes.small,
+            colors = ButtonDefaults.buttonColors(containerColor = colors.ink, contentColor = colors.background),
+            modifier = Modifier.weight(1f).heightIn(min = 56.dp),
+        ) {
             SingleLineButtonLabel(stringResource(Res.string.action_close))
         }
     }
@@ -674,9 +720,9 @@ private fun TextStyle.fitRing(ringSize: Dp, fraction: Float): TextStyle {
     }
 }
 
-/** Countdown digits sized from the ring side: about 36% for "20", 24% for "1:30". */
+/** Countdown digits sized from the ring side: about 42% for "20", 30% for "1:30" (condensed digits). */
 @Composable
 private fun countdownStyle(ringSize: Dp, longText: Boolean): TextStyle {
-    val size = with(LocalDensity.current) { (ringSize * if (longText) 0.24f else 0.36f).toSp() }
+    val size = with(LocalDensity.current) { (ringSize * if (longText) 0.30f else 0.42f).toSp() }
     return CountdownTextStyle.copy(fontSize = size, lineHeight = size)
 }

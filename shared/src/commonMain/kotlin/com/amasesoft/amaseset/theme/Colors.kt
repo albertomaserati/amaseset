@@ -50,7 +50,11 @@ val DarkOutline = Color(0xFF8393A6)
 val DarkOutlineVariant = Color(0xFF3A4D66)
 
 // Workout phase colors (ring, accents and tinted background of the run screen).
-val Amber40 = Color(0xFFC77C02)
 val Amber80 = Color(0xFFFFC56B)
-val Coral40 = Color(0xFFD9452B)
 val Coral80 = Color(0xFFFF8A75)
+
+// Darker phase tones of the light theme: white text on them reaches 4.5:1 (the run screen
+// fills its whole background with the phase color).
+val Amber35 = Color(0xFFA36200)
+val Coral35 = Color(0xFFC2412A)
+val Green35 = Color(0xFF2E7D5B)

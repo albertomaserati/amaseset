@@ -83,14 +83,12 @@
     <string name="phase_work">Lavoro</string>
     <string name="phase_rest">Riposo</string>
     <string name="phase_set_rest">Riposo tra i set</string>
-    <string name="run_set_indicator">Set %1$d/%2$d</string>
-    <string name="run_cycle_indicator">Ciclo %1$d/%2$d</string>
-    <string name="run_next">Prossimo: %1$s · %2$s</string>
+    <string name="run_progress">Ciclo %1$d / %2$d · Set %3$d / %4$d</string>
+    <string name="run_next">Prossimo · %1$s %2$s</string>
     <string name="run_last_activity">Ultima attività!</string>
     <string name="run_total_remaining">Tempo totale rimanente</string>
+    <string name="run_done">Fatto</string>
     <string name="run_paused">In pausa</string>
-    <string name="run_finished_title">Ottimo lavoro!</string>
-    <string name="run_finished_subtitle">Allenamento completato</string>
     <string name="run_stop_title">Interrompere l’allenamento?</string>
     <string name="run_stop_message">I progressi di questo allenamento andranno persi.</string>
 

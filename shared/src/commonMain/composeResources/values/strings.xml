@@ -83,14 +83,12 @@
     <string name="phase_work">Work</string>
     <string name="phase_rest">Rest</string>
     <string name="phase_set_rest">Rest between sets</string>
-    <string name="run_set_indicator">Set %1$d/%2$d</string>
-    <string name="run_cycle_indicator">Cycle %1$d/%2$d</string>
-    <string name="run_next">Next: %1$s · %2$s</string>
+    <string name="run_progress">Cycle %1$d / %2$d · Set %3$d / %4$d</string>
+    <string name="run_next">Next · %1$s %2$s</string>
     <string name="run_last_activity">Last activity!</string>
     <string name="run_total_remaining">Total remaining</string>
+    <string name="run_done">Done</string>
     <string name="run_paused">Paused</string>
-    <string name="run_finished_title">Well done!</string>
-    <string name="run_finished_subtitle">Workout completed</string>
     <string name="run_stop_title">Stop workout?</string>
     <string name="run_stop_message">Your progress in this workout will be lost.</string>
 

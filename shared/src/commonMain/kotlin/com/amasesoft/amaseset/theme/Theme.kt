@@ -91,13 +91,21 @@ private val AppShapes = Shapes(
     extraLarge = RoundedCornerShape(16.dp),
 )
 
-/** Accent color for each workout phase. */
+/**
+ * Color of each workout phase, plus the "ink" for text and icons drawn *on* a phase color
+ * (the run screen fills its background with it) and the brand fill of the finished screen.
+ */
 @Immutable
 data class PhaseColors(
     val prepare: Color,
     val work: Color,
     val rest: Color,
     val setRest: Color,
+    /** Text/icons on any phase color: dark on the light tones of the dark theme, white otherwise. */
+    val ink: Color,
+    /** Background of the finished screen (brand teal) and its ink. */
+    val done: Color,
+    val onDone: Color,
 ) {
     fun of(type: PhaseType): Color = when (type) {
         PhaseType.Prepare -> prepare
@@ -107,8 +115,24 @@ data class PhaseColors(
     }
 }
 
-private val LightPhaseColors = PhaseColors(prepare = Amber40, work = Coral40, rest = LogoGreen, setRest = Navy40)
-private val DarkPhaseColors = PhaseColors(prepare = Amber80, work = Coral80, rest = Green80, setRest = Navy80)
+internal val LightPhaseColors = PhaseColors(
+    prepare = Amber35,
+    work = Coral35,
+    rest = Green35,
+    setRest = Navy40,
+    ink = Color.White,
+    done = LogoTeal,
+    onDone = Color.White,
+)
+internal val DarkPhaseColors = PhaseColors(
+    prepare = Amber80,
+    work = Coral80,
+    rest = Green80,
+    setRest = Navy80,
+    ink = Navy10,
+    done = LogoTeal,
+    onDone = Color.White,
+)
 
 val LocalPhaseColors = staticCompositionLocalOf { LightPhaseColors }
 

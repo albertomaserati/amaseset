@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.input.pointer.pointerInput
@@ -17,6 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import com.amasesoft.amaseset.data.ThemeMode
 import com.amasesoft.amaseset.di.AppContainer
 import com.amasesoft.amaseset.platform.LocalAppLocale
+import com.amasesoft.amaseset.platform.LocalSystemBarsOverride
+import com.amasesoft.amaseset.platform.SystemBarsOverride
 import com.amasesoft.amaseset.platform.SystemBarsAppearance
 import com.amasesoft.amaseset.theme.AppTheme
 import com.amasesoft.amaseset.ui.navigation.AppNavHost
@@ -38,11 +41,16 @@ fun App(container: AppContainer) {
         ThemeMode.Dark -> true
     }
 
-    SystemBarsAppearance(darkTheme)
+    // A screen with its own background (run screen) may override the theme while shown.
+    val barsOverride = remember { SystemBarsOverride() }
+    SystemBars(barsOverride, darkTheme)
 
     val focusManager = LocalFocusManager.current
 
-    CompositionLocalProvider(LocalAppLocale provides current.language.tag) {
+    CompositionLocalProvider(
+        LocalAppLocale provides current.language.tag,
+        LocalSystemBarsOverride provides barsOverride,
+    ) {
         // Compose resources cache the resolved locale: re-create the UI when it changes.
         key(current.language) {
             AppTheme(darkTheme = darkTheme) {
@@ -63,4 +71,10 @@ fun App(container: AppContainer) {
             }
         }
     }
+}
+
+/** Separate scope: an override change recomposes only this call, not the whole [App]. */
+@Composable
+private fun SystemBars(override: SystemBarsOverride, darkTheme: Boolean) {
+    SystemBarsAppearance(override.darkBackground ?: darkTheme)
 }
